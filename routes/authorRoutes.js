@@ -115,4 +115,56 @@ router.put('/books/update', authMiddleware, allowAuthorOnly, async (req, res) =>
 }
 });
 
+/* 
+@descp - endpoint specifically gor modyfying the stockj quantity of a book 
+@route PUT /api/v1/author/books/modifyStock
+@access Private - Author only
+@params bookId, stock
+@returns updated book
+*/
+router.put('/books/modifyStock', authMiddleware, allowAuthorOnly, async (req, res) => {
+    const { bookId, stock } = req.body;
+    
+    try {
+        const book = await Book.findOne({ _id: bookId, author: req.user.id });
+        if (!book) {
+        return res.status(404).json({ error: 'Book not found or not owned by you' });
+    }
+        //create a copy of the book object to send as response
+        const oldBook = JSON.parse(JSON.stringify(book));
+        book.stock = stock;
+        await book.save();
+        res.status(200).json({ message: 'Stock updated successfully', oldBook, book });
+    } catch (error) {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+);
+
+/*
+    @desc endpoint for fetching a specific book info mentioned by author
+    @route GET /api/v1/author/books/:bookId
+    @access Private - Author only
+    @takes bookId
+    @returns book details
+ */
+router.get( "/books/getBookInfo",authMiddleware,allowAuthorOnly,async (req, res) => {
+    const { bookId } = req.body;
+    try {
+      const book = await Book.findOne({
+        _id: bookId,
+        author: req.user.id,
+      }).populate("borrowedBy", "name email");
+      if (!book) {
+        return res
+          .status(404)
+          .json({ error: "Book not found or not owned by you" });
+      }
+      res.status(200).json({ book });
+    } catch (error) {
+      res.status(500).json({ error: "Internal server error" });
+    }
+  }
+);
+
 module.exports = router;
