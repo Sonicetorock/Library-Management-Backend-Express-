@@ -23,15 +23,16 @@ const userSchema = new mongoose.Schema(
         default: "Reader",
         required: true 
     },
+    // only upto 5 books can be taken by a reader
     borrowedBooks: [{ 
         type: mongoose.Schema.Types.ObjectId, 
         ref: "Book" , 
-        max : 5
-    }], // For Readers
+        max: 5
+    }], // Readers
     booksWritten: [{ 
         type: mongoose.Schema.Types.ObjectId, 
         ref: "Book" 
-    }], // For Authors
+    }], // Authors
   },
   { timestamps: true }
 );
