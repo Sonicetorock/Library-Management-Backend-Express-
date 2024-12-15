@@ -6,7 +6,7 @@ const { generateToken, verifyToken } = require('../utils/jwtUtils');
 const router = express.Router();
 
 /*
-    @route POST /api/auth/signup
+    @route POST /api/v1/auth/signup
     @desc Register user with proper validation and generate token
     @access Public
     @params name, email, password, role
@@ -35,7 +35,7 @@ router.post('/signup', async (req, res) => {
 });
 
 /*
-    @route POST /api/auth/login
+    @route POST /api/v1/auth/login
     @desc Login user with proper validation and generate token
     @access Public
     @params email, password
@@ -44,17 +44,27 @@ router.post('/signup', async (req, res) => {
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
-  //chk if user is already logged in( token already exists)
-
-  const token = req.headers.authorization?.split(" ")[1]; 
-  if (token) {
-      const decoded = verifyToken(token);
-      if (decoded) {
-        return res
-          .status(200)
-          .json({ message: "User already logged in", token });
-      }
-    }
+  //chk if
+  // const token = req.headers.authorization?.split(" ")[1]; 
+  // if (token) {
+  //     const decoded = verifyToken(token);
+  //     if (decoded) {
+  //       //chk if decoded creds match the user creds
+  //       const user = await User.findOne({ email: decoded.email });
+  //       if (!user) {
+  //         return res.status(404).json({ error: "User not found" });
+  //       }
+  //       // chk the creds of fetched user and passed creds
+  //       const isPasswordValid = await user.comparePassword(password);
+  //       if (!isPasswordValid) {
+  //         return res.status(401).json({ error: "Invalid credentials" });
+  //       }
+  //       // if creds match, return user already logged in
+  //       return res
+  //         .status(200)
+  //         .json({ message: "User already logged in", token });
+  //     }
+  //   }
 
   try {
     const user = await User.findOne({ email });
